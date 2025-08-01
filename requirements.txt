@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+jinja2
+pytesseract
+Pillow
+PyMuPDF
+pandas
+openpyxl
+sqlalchemy
+python-multipart

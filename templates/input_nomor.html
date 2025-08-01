@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Masuk Pemeriksaan Dokumen{% endblock %}
+
+{% block content %}
+<div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Masukkan Nomor Surat Tugas</h2>
+    <form method="post" action="/masuk">
+        <label for="nomor_surat_tugas" class="block font-semibold mb-2">Nomor Surat Tugas</label>
+        <input type="text" id="nomor_surat_tugas" name="nomor_surat_tugas"
+               class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+               required>
+        <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+            Lanjut
+        </button>
+    </form>
+</div>
+{% endblock %}

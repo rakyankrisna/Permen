@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Pemeriksaan Dokumen{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-lg rounded-xl p-8 max-w-xl w-full">
+    <h1 class="text-2xl font-bold text-center text-blue-700 mb-4">Pemeriksaan Dokumen</h1>
+    <p class="text-center text-gray-600 mb-6">Silakan masukkan data berikut untuk memulai pemeriksaan dokumen.</p>
+
+    <form action="/proses-folder" method="post" onsubmit="showLoading()">
+        <!-- Input Instansi Terperiksa -->
+        <input
+            type="text"
+            name="instansi_terperiksa"
+            placeholder="Nama Instansi Terperiksa"
+            class="w-full mb-4 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+        />
+
+        <!-- Input Folder Path -->
+        <input
+            type="text"
+            name="folder_path"
+            placeholder="Contoh: C:\Users\Dokumen\Periksa"
+            class="w-full mb-4 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+        />
+
+        <!-- Hidden input untuk menyimpan nomor surat tugas -->
+        <input type="hidden" name="nomor_surat_tugas" value="{{ nomor_surat_tugas }}">
+
+        <button
+            id="submitBtn"
+            type="submit"
+            class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+        >
+            Mulai Pemeriksaan
+        </button>
+    </form>
+
+    <!-- Spinner Loading -->
+    <div id="loading" class="hidden flex flex-col items-center mt-6">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
+        <p class="mt-4 text-gray-600">Memeriksa dokumen, mohon tunggu...</p>
+    </div>
+</div>
+
+<script>
+    function showLoading() {
+        document.getElementById('submitBtn').style.display = 'none';
+        document.getElementById('loading').classList.remove('hidden');
+
+    }
+</script>
+{% endblock %}

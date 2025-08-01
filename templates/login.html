@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-md bg-white p-6 rounded shadow-md">
+    <h2 class="text-xl font-bold mb-4 text-center">Login User</h2>
+
+    {% if error %}
+        <p class="text-red-500 text-sm mb-4 text-center">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" action="/login">
+        <label class="block mb-2 font-semibold">Username</label>
+        <input type="text" name="username" class="w-full p-2 mb-4 border rounded" required>
+
+        <label class="block mb-2 font-semibold">Password</label>
+        <input type="password" name="password" class="w-full p-2 mb-4 border rounded" required>
+
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white w-full p-2 rounded">Login</button>
+    </form>
+
+    <p class="mt-4 text-sm text-center text-gray-600">
+        Belum punya akun?
+        <a href="/register" class="text-blue-600 hover:underline">Daftar di sini</a>
+    </p>
+</div>
+{% endblock %}

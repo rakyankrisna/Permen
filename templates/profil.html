@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Profil Pengguna{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-6 rounded shadow-md">
+    <h1 class="text-2xl font-bold mb-4 text-gray-800">Profil Pengguna</h1>
+    <p class="mb-6 text-gray-700">Email: <span class="font-semibold">{{ user }}</span></p>
+
+    <h2 class="text-xl font-semibold mb-2 text-gray-800">Riwayat Pemeriksaan</h2>
+
+    {% if histori %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-left border border-gray-300">
+            <thead class="bg-gray-100 text-gray-700">
+                <tr>
+                    <th class="px-4 py-2 border-b">Nomor Surat Tugas</th>
+                    <th class="px-4 py-2 border-b">Instansi</th>
+                    <th class="px-4 py-2 border-b">Nama File</th>
+                    <th class="px-4 py-2 border-b">Waktu</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in histori %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-2 border-b">{{ row[2] }}</td>
+                    <td class="px-4 py-2 border-b">{{ row[3] }}</td>
+                    <td class="px-4 py-2 border-b">{{ row[4] }}</td>
+                    <td class="px-4 py-2 border-b">{{ row[5] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-gray-500 mt-4">Belum ada riwayat pemeriksaan.</p>
+    {% endif %}
+</div>
+{% endblock %}

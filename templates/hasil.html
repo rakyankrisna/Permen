@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><title>Hasil Pemeriksaan</title></head>
+<body>
+  <h1>Hasil Pemeriksaan Dokumen</h1>
+  <table border="1">
+    <tr>
+      <th>File</th>
+      <th>SPM</th>
+      <th>Daftar SP2D</th>
+      <th>SP2D</th>
+      <th>SPP</th>
+    </tr>
+    {% for row in hasil %}
+    <tr>
+      <td>{{ row.file }}</td>
+      <td>{{ row.status_spm }}</td>
+      <td>{{ row.status_daftar_sp2d }}</td>
+      <td>{{ row.status_sp2d }}</td>
+      <td>{{ row.status_spp }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

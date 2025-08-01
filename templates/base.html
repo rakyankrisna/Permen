@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Sistem Pemeriksaan{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-50 min-h-screen">
+
+<!-- Navbar -->
+<nav class="bg-blue-700 shadow">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <img src="/static/logo_bpk.png" alt="Logo BPK" class="w-10 h-10 rounded-full bg-white p-1" />
+            <span class="text-xl font-bold text-white">Sistem Pemeriksaan Dokumen - BPK RI</span>
+        </div>
+        <div>
+            {% if request.session.get('user') %}
+            <div class="relative inline-block">
+                <button id="dropdownUser" class="flex items-center text-sm font-medium text-white hover:text-gray-100 focus:outline-none">
+                    {{ request.session.get('user') }}
+                    <svg class="ml-2 w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-10">
+                    <a href="/profil" class="block px-4 py-2 text-gray-700 hover:bg-blue-100">Profil</a>
+                    <a href="/logout" class="block px-4 py-2 text-gray-700 hover:bg-blue-100">Logout</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- Konten dinamis -->
+<div class="flex justify-center py-10 px-4">
+    {% block content %}{% endblock %}
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dropdownUser = document.getElementById("dropdownUser");
+        const dropdownMenu = document.getElementById("dropdownMenu");
+
+        if (dropdownUser) {
+            dropdownUser.addEventListener("click", function (e) {
+                e.preventDefault();
+                dropdownMenu.classList.toggle("hidden");
+            });
+
+            window.addEventListener("click", function (e) {
+                if (!dropdownUser.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.add("hidden");
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
