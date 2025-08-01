@@ -2,61 +2,222 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Sistem Pemeriksaan{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Permen - Sistem Analisis Dokumen BPK{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-blue-50 min-h-screen">
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <img class="h-8 w-auto" src="{{ url_for('static', path='logo_bpk.png') }}" alt="BPK Logo">
+                        <span class="ml-2 text-xl font-bold text-gray-900">Permen</span>
+                    </div>
+                </div>
 
-<!-- Navbar -->
-<nav class="bg-blue-700 shadow">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-            <img src="/static/logo_bpk.png" alt="Logo BPK" class="w-10 h-10 rounded-full bg-white p-1" />
-            <span class="text-xl font-bold text-white">Sistem Pemeriksaan Dokumen - BPK RI</span>
-        </div>
-        <div>
-            {% if request.session.get('user') %}
-            <div class="relative inline-block">
-                <button id="dropdownUser" class="flex items-center text-sm font-medium text-white hover:text-gray-100 focus:outline-none">
-                    {{ request.session.get('user') }}
-                    <svg class="ml-2 w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
-                <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border border-gray-200 z-10">
-                    <a href="/profil" class="block px-4 py-2 text-gray-700 hover:bg-blue-100">Profil</a>
-                    <a href="/logout" class="block px-4 py-2 text-gray-700 hover:bg-blue-100">Logout</a>
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-4">
+                    {% if request.session.get("user") %}
+                        <a href="/dashboard" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Dashboard
+                        </a>
+                        <a href="/upload" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Upload
+                        </a>
+                        <a href="/history" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Riwayat
+                        </a>
+                        <a href="/profile" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Profil
+                        </a>
+                        
+                        <!-- User Menu -->
+                        <div class="relative">
+                            <button id="userMenuButton" class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <div class="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <span class="text-blue-600 font-medium">{{ request.session.get("user", "")[0].upper() }}</span>
+                                </div>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                <div class="px-4 py-2 text-sm text-gray-700 border-b">
+                                    <p class="font-medium">{{ request.session.get("user", "") }}</p>
+                                    <p class="text-gray-500">Pengguna Aktif</p>
+                                </div>
+                                <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Profil Saya
+                                </a>
+                                <a href="/logout" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                    Keluar
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="/login" class="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Masuk
+                        </a>
+                        <a href="/register" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
+                            Daftar
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuButton" class="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
-            {% endif %}
         </div>
-    </div>
-</nav>
 
-<!-- Konten dinamis -->
-<div class="flex justify-center py-10 px-4">
-    {% block content %}{% endblock %}
-</div>
+        <!-- Mobile Navigation -->
+        <div id="mobileMenu" class="hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
+                {% if request.session.get("user") %}
+                    <a href="/dashboard" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
+                        Dashboard
+                    </a>
+                    <a href="/upload" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
+                        Upload
+                    </a>
+                    <a href="/history" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
+                        Riwayat
+                    </a>
+                    <a href="/profile" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
+                        Profil
+                    </a>
+                    <div class="border-t border-gray-200 pt-4">
+                        <div class="px-3 py-2 text-sm text-gray-700">
+                            <p class="font-medium">{{ request.session.get("user", "") }}</p>
+                        </div>
+                        <a href="/logout" class="text-red-600 hover:text-red-800 block px-3 py-2 rounded-md text-base font-medium">
+                            Keluar
+                        </a>
+                    </div>
+                {% else %}
+                    <a href="/login" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
+                        Masuk
+                    </a>
+                    <a href="/register" class="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
+                        Daftar
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const dropdownUser = document.getElementById("dropdownUser");
-        const dropdownMenu = document.getElementById("dropdownMenu");
+    <!-- Main Content -->
+    <main class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
 
-        if (dropdownUser) {
-            dropdownUser.addEventListener("click", function (e) {
-                e.preventDefault();
-                dropdownMenu.classList.toggle("hidden");
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <img class="h-6 w-auto" src="{{ url_for('static', path='logo_bpk.png') }}" alt="BPK Logo">
+                    <span class="ml-2 text-sm text-gray-600">© 2024 Badan Pemeriksa Keuangan. All rights reserved.</span>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-gray-600">
+                        <span class="sr-only">Privacy Policy</span>
+                        <span class="text-sm">Privacy Policy</span>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-600">
+                        <span class="sr-only">Terms of Service</span>
+                        <span class="text-sm">Terms of Service</span>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-600">
+                        <span class="sr-only">Contact</span>
+                        <span class="text-sm">Contact</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // User menu toggle
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userMenu = document.getElementById('userMenu');
+        
+        if (userMenuButton && userMenu) {
+            userMenuButton.addEventListener('click', () => {
+                userMenu.classList.toggle('hidden');
             });
 
-            window.addEventListener("click", function (e) {
-                if (!dropdownUser.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                    dropdownMenu.classList.add("hidden");
+            // Close menu when clicking outside
+            document.addEventListener('click', (event) => {
+                if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                    userMenu.classList.add('hidden');
                 }
             });
         }
-    });
-</script>
 
+        // Auto-hide mobile menu on window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // Flash messages
+        const flashMessages = document.querySelectorAll('.flash-message');
+        flashMessages.forEach(message => {
+            setTimeout(() => {
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.remove();
+                }, 300);
+            }, 5000);
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

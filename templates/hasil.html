@@ -1,25 +1,172 @@
-<!DOCTYPE html>
-<html>
-<head><title>Hasil Pemeriksaan</title></head>
-<body>
-  <h1>Hasil Pemeriksaan Dokumen</h1>
-  <table border="1">
-    <tr>
-      <th>File</th>
-      <th>SPM</th>
-      <th>Daftar SP2D</th>
-      <th>SP2D</th>
-      <th>SPP</th>
-    </tr>
-    {% for row in hasil %}
-    <tr>
-      <td>{{ row.file }}</td>
-      <td>{{ row.status_spm }}</td>
-      <td>{{ row.status_daftar_sp2d }}</td>
-      <td>{{ row.status_sp2d }}</td>
-      <td>{{ row.status_spp }}</td>
-    </tr>
-    {% endfor %}
-  </table>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Hasil Analisis - Permen{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Hasil Analisis Dokumen</h1>
+            <p class="text-gray-600">File: {{ hasil.nama_file }}</p>
+        </div>
+
+        <!-- Document Info -->
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Informasi Dokumen</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nomor Surat Tugas</label>
+                    <p class="text-gray-900">{{ hasil.nomor_surat_tugas }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Instansi Terperiksa</label>
+                    <p class="text-gray-900">{{ hasil.instansi_terperiksa }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Waktu Analisis</label>
+                    <p class="text-gray-900">{{ hasil.waktu }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Dianalisis Oleh</label>
+                    <p class="text-gray-900">{{ hasil.user }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Types Found -->
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Jenis Dokumen yang Ditemukan</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {% for doc_type, status in hasil.items() %}
+                    {% if doc_type in ['SPM', 'DAFTAR_SP2D', 'SP2D', 'SPP', 'SK', 'SURAT_TUGAS', 'BAPP', 'BAST', 'BA_PEMBAYARAN', 'SURAT_PERJANJIAN', 'KONTRAK', 'SPK', 'SPMK', 'KWITANSI', 'INVOICE'] %}
+                        <div class="text-center p-3 rounded-lg {% if status == 'Ada' %}bg-green-100 border border-green-200{% else %}bg-gray-100 border border-gray-200{% endif %}">
+                            <div class="text-sm font-medium text-gray-700 mb-1">{{ doc_type.replace('_', ' ').title() }}</div>
+                            <div class="text-lg font-bold {% if status == 'Ada' %}text-green-600{% else %}text-gray-500{% endif %}">
+                                {{ status }}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Detailed Information -->
+        {% if hasil.SPM == 'Ada' %}
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Detail SPM (Surat Perintah Membayar)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nomor SPM</label>
+                    <p class="text-gray-900">{{ hasil.nomor_spm or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Tanggal SPM</label>
+                    <p class="text-gray-900">{{ hasil.tanggal_spm or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">DIPA</label>
+                    <p class="text-gray-900">{{ hasil.dipa_spm or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nominal</label>
+                    <p class="text-gray-900">{{ hasil.nominal_spm or 'Tidak ditemukan' }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if hasil.SP2D == 'Ada' %}
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                <svg class="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+                Detail SP2D (Surat Perintah Pencairan Dana)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nomor SP2D</label>
+                    <p class="text-gray-900">{{ hasil.nomor_sp2d or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Tanggal SP2D</label>
+                    <p class="text-gray-900">{{ hasil.tanggal_sp2d or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">NPWP</label>
+                    <p class="text-gray-900">{{ hasil.npwp_sp2d or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Rekening</label>
+                    <p class="text-gray-900">{{ hasil.rekening_sp2d or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Bank</label>
+                    <p class="text-gray-900">{{ hasil.bank_sp2d or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Jumlah</label>
+                    <p class="text-gray-900">{{ hasil.jumlah_sp2d or 'Tidak ditemukan' }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if hasil.SPP == 'Ada' %}
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                <svg class="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Detail SPP (Surat Permintaan Pembayaran)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nomor SPP</label>
+                    <p class="text-gray-900">{{ hasil.nomor_spp or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Tanggal SPP</label>
+                    <p class="text-gray-900">{{ hasil.tanggal_spp or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">DIPA</label>
+                    <p class="text-gray-900">{{ hasil.dipa_spp or 'Tidak ditemukan' }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nominal</label>
+                    <p class="text-gray-900">{{ hasil.nominal_spp or 'Tidak ditemukan' }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/upload" class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+                Upload Dokumen Lain
+            </a>
+            <a href="/history" class="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Lihat Riwayat
+            </a>
+            <a href="/dashboard" class="inline-flex items-center justify-center px-6 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                Kembali ke Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
