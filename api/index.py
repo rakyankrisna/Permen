@@ -25,9 +25,9 @@ app = FastAPI(title="Permen - Document Analysis System")
 # Middleware
 app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "rahasia-anda"))
 
-# Templates and static files
-templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Templates and static files - Fixed paths for Vercel
+templates = Jinja2Templates(directory="../templates")
+app.mount("/static", StaticFiles(directory="../static"), name="static")
 
 # Database setup
 DB_PATH = "/tmp/histori_pemeriksaan.db"
