@@ -55,6 +55,33 @@ GOOGLE_APPLICATION_CREDENTIALS=path-to-credentials.json
 2. Tunggu proses build selesai
 3. Aplikasi akan live di URL yang diberikan
 
+## 🔧 Konfigurasi Vercel
+
+### vercel.json
+File `vercel.json` sudah dikonfigurasi dengan benar:
+
+```json
+{
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 30
+    }
+  }
+}
+```
+
+**Catatan Penting**: 
+- Jangan menggunakan `builds` dan `functions` bersamaan
+- Gunakan hanya `functions` untuk konfigurasi timeout
+- Vercel akan otomatis mendeteksi Python project
+
+### Troubleshooting vercel.json
+
+Jika mendapat error:
+- **"functions and builds cannot be used together"**: Hapus salah satu property
+- **"maxDuration not supported"**: Gunakan format yang benar
+- **"route not found"**: Pastikan path ke `api/index.py` benar
+
 ## 🔧 Setup OCR Service
 
 ### Option 1: OCR.space API (Recommended)
@@ -127,6 +154,7 @@ Setelah setup awal:
 1. **Module not found**: Pastikan semua dependencies di `requirements.txt`
 2. **Import errors**: Check struktur folder dan `__init__.py` files
 3. **Path issues**: Gunakan relative paths, bukan absolute
+4. **vercel.json errors**: Pastikan konfigurasi benar
 
 ### Runtime Errors
 
