@@ -26,11 +26,11 @@ app = FastAPI(title="Permen - Document Analysis System")
 app.add_middleware(SessionMiddleware, secret_key=os.getenv("SESSION_SECRET", "rahasia-anda"))
 
 # Templates and static files - Fixed paths for Vercel
-templates = Jinja2Templates(directory="../templates")
-app.mount("/static", StaticFiles(directory="../static"), name="static")
+templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Database setup
-DB_PATH = "/tmp/histori_pemeriksaan.db"
+DB_PATH = os.path.join(os.getcwd(), "histori_pemeriksaan.db")
 
 def init_db():
     """Initialize SQLite database"""
@@ -187,16 +187,31 @@ async def analyze_document(
     
     try:
         # Extract text from PDF
-        text = extract_text_from_pdf(tmp_path)
-        
+        try:
+            text = extract_text_from_pdf(tmp_path)
+        except Exception as e:
+            return templates.TemplateResponse("upload.html", {
+                "request": request,
+                "user": user,
+                "error": f"Gagal melakukan OCR: {str(e)}"
+            })
+
         # Analyze document
-        analysis_result = extract_document_details(text)
+        try:
+            analysis_result = extract_document_details(text)
+        except Exception as e:
+            return templates.TemplateResponse("upload.html", {
+                "request": request,
+                "user": user,
+                "error": f"Gagal menganalisis dokumen: {str(e)}"
+            })
+
         analysis_result['nama_file'] = file.filename
         analysis_result['user'] = user
         analysis_result['nomor_surat_tugas'] = nomor_surat_tugas
         analysis_result['instansi_terperiksa'] = instansi_terperiksa
         analysis_result['waktu'] = datetime.now().isoformat()
-        
+
         # Save to database
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
@@ -206,13 +221,12 @@ async def analyze_document(
         """, (user, nomor_surat_tugas, instansi_terperiksa, file.filename, json.dumps(analysis_result), analysis_result['waktu']))
         conn.commit()
         conn.close()
-        
+
         return templates.TemplateResponse("hasil.html", {
             "request": request,
             "hasil": analysis_result,
             "user": user
         })
-        
     finally:
         # Clean up temporary file
         os.unlink(tmp_path)
@@ -266,6 +280,3 @@ async def get_user_info(request: Request):
     
     return {"user": user}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000) 
